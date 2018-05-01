@@ -2,7 +2,7 @@ var workerBehavior = {
 
 	run: function(creep, harvestersCount, buildersCount, repairersCount){
 		var harvesters = 5;
-		var builders = 2;
+		var builders = 5;
 		var repairers = 1;
 		var workersAllowedInLocationZero = 3;
 
@@ -67,7 +67,7 @@ var workerBehavior = {
 					var targets = creep.pos.findClosestByRange(FIND_STRUCTURES, {
 						filter: (structure) => {
 							return (structure.structureType == STRUCTURE_EXTENSION ||
-								structure.structureType == STRUCTURE_SPAWN || structure.structureType == STRUCTURE_WALL) 
+								structure.structureType == STRUCTURE_SPAWN) 
 								&& structure.energy < structure.energyCapacity;
 							}
 						});
@@ -93,8 +93,9 @@ var workerBehavior = {
 							creep.moveTo(targets[0], {visualizePathStyle: {stroke: creep.memory.color}});
 						}
 						}else{
-							creep.moveTo(2,25);
+							// creep.moveTo(2,25);
 							creep.say('🍾 idle builder')
+							//Turn idle builder into upgrader
 							creep.memory.role = "upgrader";
 							creep.memory.color = upgraderColor;
 							creep.say("⚡ upgrader")
@@ -118,7 +119,7 @@ var workerBehavior = {
 							}
 						}else{
 							var closestDamagedStructure = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-					            filter: (structure) => {return (structure.hits < structure.hitsMax) && (structure.hits<30000);}
+					            filter: (structure) => {return (structure.hits < structure.hitsMax) && (structure.hits<25000);}
 					        });
 					        if(closestDamagedStructure){
 						        if(creep.memory.spaceGiven >= 3){
@@ -161,7 +162,7 @@ var workerBehavior = {
 		 					{filter: (creep) => {  return (creep.memory.mineLocation == 1); }
 		 				}).length;
 		 			console.log("mineLoc 0 count: "+locationZeroCount +  " -- mineLoc 1 count: "+locationOneCount);
-					if(locationZeroCount+1 <= locationOneCount){
+					if(locationZeroCount-2 <= locationOneCount){
 						return 0;
 					}else{
 						return 1;

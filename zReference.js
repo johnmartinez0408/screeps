@@ -10,7 +10,10 @@ Game.spawns.Spawn1.createCreep(['attack','move'],'Warrior');
 //Build road
 Game.spawns['Spawn1'].room.createConstructionSite(14, 28, STRUCTURE_ROAD);
 
-
+var _ = require('lodash');
+var harvesters = _.filter(Game.creeps, {
+    memory: {role: 'harvester'}
+});
 
   		var attackCost = 80;
      var rangedAttackCost = 150;

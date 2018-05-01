@@ -5,7 +5,7 @@ var workerFactory = {
 
     run: function(spawn, workerCount){
 
-        var maxWorkers = 18;
+        var maxWorkers = 15;
     	var newName = "Worker" + Game.time;
     	var workerMaxLevel = Math.trunc(spawn.room.energyCapacityAvailable /50);
         var energyInRoom = Math.trunc(spawn.room.energyAvailable /50);
