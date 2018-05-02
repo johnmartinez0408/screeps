@@ -19,12 +19,21 @@ module.exports.loop = function () {
     // }
     
     var spawn = Game.spawns["Chester"]
-    var maxWorkers = 14;
+    var maxWorkers = 12;
 
+    //If we are under attack
     var enemiesInBase = spawn.room.find(FIND_HOSTILE_CREEPS, 
         {filter: (creep) => {  return (creep.memory.class == "worker"); }}).length;
     if(enemiesInBase){
-        maxWorkers = 6;
+        Game.flags["AttackFlag"]=1;
+        maxWorkers = 7;
+        var creeps = spawn.room.find(FIND_MY_CREEPS);
+        for(var name in creeps){ //Turn all creeps in room into harvesters
+            var creep = Game.creeps[name];
+            console.log('previous harvesters: '+  harvestersCount);
+            creep.memory.role = "harvester";
+            creep.memory.color = harvesterColor;
+        }
     }
     
     var currentWorkers = spawn.room.find(FIND_MY_CREEPS, 
@@ -48,19 +57,6 @@ module.exports.loop = function () {
     }
     
 
-    
-
-    // var testCreep = Game.creeps["Test"];
-    // if(testCreep){
-    //     if(testCreep.room.name == "E31N13"){
-    //         testCreep.say("to E30N13")
-    //         testCreep.moveTo(new RoomPosition(44,28, "E30N13"), {visualizePathStyle: {stroke: "#ff00ff"}});
-    //     }else{
-    //         testCreep.say("I did it!");
-    //         testCreep.moveTo(44,28, {visualizePathStyle: {stroke: "#ff00ff"}});
-    //     }
-    // }
-    
 
     //Tower actions
     var towers = spawn.room.find(FIND_STRUCTURES, 
@@ -97,3 +93,19 @@ var countWorkersRole = function(spawn, role){
     return Game.spawns["Chester"].room.find(FIND_MY_CREEPS, 
         {filter: (creep) => {  return (creep.memory.class == "worker") && creep.memory.role == role; }}).length;
 }
+
+
+
+    
+
+    // var testCreep = Game.creeps["Test"];
+    // if(testCreep){
+    //     if(testCreep.room.name == "E31N13"){
+    //         testCreep.say("to E30N13")
+    //         testCreep.moveTo(new RoomPosition(44,28, "E30N13"), {visualizePathStyle: {stroke: "#ff00ff"}});
+    //     }else{
+    //         testCreep.say("I did it!");
+    //         testCreep.moveTo(44,28, {visualizePathStyle: {stroke: "#ff00ff"}});
+    //     }
+    // }
+    

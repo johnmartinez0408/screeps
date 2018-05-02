@@ -6,11 +6,11 @@ var workerFactory = {
     run: function(spawn, workerCount, maxWorkers){
 
     	var newName = "Worker" + Game.time;
-    	var workerMaxLevel = Math.trunc(spawn.room.energyCapacityAvailable /50);
-        var energyInRoom = Math.trunc(spawn.room.energyAvailable /50);
-        var workCost = 2;
-        var moveCost = 1;
-        var carryCost = 1;
+    	var workerMaxLevel = Math.trunc(spawn.room.energyCapacityAvailable /10);
+        var energyInRoom = Math.trunc(spawn.room.energyAvailable /10);
+        var workCost = 10;
+        var moveCost = 5;
+        var carryCost = 5;
 
         //Ensure we aren't already spawning a creep and that we have a minimum of 300 energy
         if(!spawn.spawning){
@@ -28,8 +28,8 @@ var workerFactory = {
                     var totalPrice = 0;
                     for(var i=0; i<prices.length; i++){totalPrice += prices[i];}
                    
-                    var enhancedAttributes = [WORK, CARRY, MOVE, WORK, CARRY]
-                    var enhancedAttributesPrices = [workCost, carryCost, moveCost, workCost, carryCost]
+                    var enhancedAttributes = [MOVE, WORK, CARRY]
+                    var enhancedAttributesPrices = [moveCost, workCost, carryCost]
         			var canEnhance = true;
                     var i =0;
                     // console.log("\t\t" +"|==============");

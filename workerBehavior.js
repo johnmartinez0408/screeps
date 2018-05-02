@@ -1,7 +1,7 @@
 var workerBehavior = {
 
 	run: function(creep, harvestersCount, buildersCount, repairersCount){
-		var harvesters = 5;
+		var harvesters = 6;
 		var repairers = 1;
 		var builders = 1;
 
@@ -14,6 +14,10 @@ var workerBehavior = {
 		var idleColor = "#BF5FFF";
 
 		var needResources;
+
+		if(creep.fatigue > 0){
+			creep.say("tired: " + creep.fatigue);
+		}
 		//Update needResources
 		if(creep.memory.needResources && creep.carry.energy == creep.carryCapacity) {
 			creep.memory.needResources = false; 
@@ -62,7 +66,7 @@ var workerBehavior = {
 			//If this worker has a role
 			if(creep.memory.role){
 				if(creep.memory.role == "harvester"){ //If this worker is a harvester
-					//Deplosit gathered resources
+					//Deposit gathered resources
 					var targets = creep.pos.findClosestByRange(FIND_STRUCTURES, {
 						filter: (structure) => {
 							return (structure.structureType == STRUCTURE_EXTENSION ||
@@ -75,7 +79,15 @@ var workerBehavior = {
 							creep.moveTo(targets, {visualizePathStyle: {stroke: creep.memory.color}});
 						}
 					}else{
-						creep.moveTo(idleArea[0],idleArea[1], {visualizePathStyle: {stroke: idleColor}});
+						//If no normal targets available, make storage the new target
+						targets = creep.room.storage;
+						if(targets){
+							if(creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) { //Deposit energy into storage
+								creep.moveTo(targets, {visualizePathStyle: {stroke: creep.memory.color}});
+							}
+						}else{//If no available storage, move to idle area
+							creep.moveTo(idleArea[0],idleArea[1], {visualizePathStyle: {stroke: idleColor}});
+						}
 					}
 				}
 				else if(creep.memory.role == "builder"){//If this worker is a builder
