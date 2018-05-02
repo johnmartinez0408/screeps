@@ -19,7 +19,7 @@ module.exports.loop = function () {
     // }
     
     var spawn = Game.spawns["Chester"]
-    var maxWorkers = 12;
+    var maxWorkers = 10;
 
     //If we are under attack
     var enemiesInBase = spawn.room.find(FIND_HOSTILE_CREEPS, 
@@ -53,7 +53,7 @@ module.exports.loop = function () {
             soldierFactory.run(spawn, "warrior");
         // }
     }else{
-        console.log("nothing to spawn... " + Game.time);
+        // console.log("nothing to spawn... " + Game.time);
     }
     
 
@@ -68,7 +68,7 @@ module.exports.loop = function () {
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
         if(creep.memory.class=="worker"){
-            workerBehavior.run(creep, countWorkersRole(spawn, "harvester"), countWorkersRole(spawn, "builder"), countWorkersRole(spawn, "repairer") );
+            workerBehavior.run(spawn, creep, countWorkersRole(spawn, "harvester"), countWorkersRole(spawn, "builder"), countWorkersRole(spawn, "repairer") );
         }else if(creep.memory.class=="soldier"){
             soldierBehavior.run(creep, Game.flags["AttackFlag"], Game.flags["AttackStructures"], Game.flags["DefendFlag"])
         }
