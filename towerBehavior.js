@@ -19,11 +19,20 @@ var towerBehavior = {
             }
 
             //Repair structures
-            var closestDamagedWall = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-                filter: (structure) => {return (structure.hits < structure.hitsMax) && (structure.structureType == STRUCTURE_WALL) && (structure.hits<25000);}
+            var closestDamagedBarrier = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+                filter: (structure) => {return (structure.hits < structure.hitsMax)
+                 && ((structure.structureType == STRUCTURE_WALL) || 
+                    (structure.structureType == STRUCTURE_RAMPART)) 
+                 && (structure.hits<25000);}
             });
-            if(closestDamagedWall && (tower.energy > tower.energyCapacity-250)) {
-                tower.repair(closestDamagedWall);
+            if(closestDamagedBarrier && (tower.energy > tower.energyCapacity/2)) {
+                tower.repair(closestDamagedBarrier);
+            }else{
+                var closestDamagedStructure =  tower.pos.findClosestByRange(FIND_STRUCTURES, 
+                    {filter: (structure) => {return (structure.hits < structure.hitsMax)}});
+                if(closestDamagedStructure && (tower.energy > tower.energyCapacity/2)) {
+                    tower.repair(closestDamagedBarrier);
+                }
             }
 
         }//End for loop

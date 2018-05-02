@@ -6,8 +6,12 @@ var workerBehavior = require('workerBehavior');
 
 var soldierFactory = require('soldier.factory');
 var soldierBehavior = require('soldier.behavior');
+var claimerFactory = require('claimer.factory');
+var claimerBehavior = require('claimer.behavior');
+
 
 var towerBehavior = require('towerBehavior');
+
 
 
 module.exports.loop = function () {
@@ -17,22 +21,20 @@ module.exports.loop = function () {
     // if(Game.creeps["Soldier5752796"].attack(Game.getObjectById("5ae8bdae692254390601d145")) == ERR_NOT_IN_RANGE){
     //     Game.creeps["Soldier5752796"].moveTo(Game.getObjectById("5ae8bdae692254390601d145"));
     // }
-    
+    var makeClaimers = false;
+    var makeEmergencySoldiers = false;
+    var claimerTarget = "E31N14";
     var spawn = Game.spawns["Chester"]
-    var maxWorkers = 10;
+    var maxWorkers = 13;
 
     //If we are under attack
-    var enemiesInBase = spawn.room.find(FIND_HOSTILE_CREEPS, 
-        {filter: (creep) => {  return (creep.memory.class == "worker"); }}).length;
+    var enemiesInBase = spawn.room.find(FIND_HOSTILE_CREEPS).length;
     if(enemiesInBase){
-        Game.flags["AttackFlag"]=1;
-        maxWorkers = 7;
-        var creeps = spawn.room.find(FIND_MY_CREEPS);
-        for(var name in creeps){ //Turn all creeps in room into harvesters
-            var creep = Game.creeps[name];
-            console.log('previous harvesters: '+  harvestersCount);
-            creep.memory.role = "harvester";
-            creep.memory.color = harvesterColor;
+        Game.flags["AttackFlag"].setColor(1);
+        maxWorkers = 6;
+        myCreepsCount = spawn.room.find(FIND_MY_CREEPS).length;
+        if(myCreepsCount == 0){
+            spawn.room.controller.activateSafeMode();
         }
     }
     
@@ -45,15 +47,15 @@ module.exports.loop = function () {
     }
     //If war flag is red, spawn soldiers
     else if(Game.flags["WarFlag"].color==1){
-        var tanksCount =  Game.spawns["Chester"].room.find(FIND_CREEPS, 
+        var tanksCount =  spawn.room.find(FIND_CREEPS, 
             {filter: (creep) => {  return (creep.memory.role == "tank"); }}).length;
         // if(tanksCount <1){
         //     soldierFactory.run(spawn, "tank");
         // }else{
             soldierFactory.run(spawn, "warrior");
         // }
-    }else{
-        // console.log("nothing to spawn... " + Game.time);
+    }else if(makeClaimers){
+        claimerFactory.run(spawn, claimerTarget);
     }
     
 
@@ -71,7 +73,10 @@ module.exports.loop = function () {
             workerBehavior.run(spawn, creep, countWorkersRole(spawn, "harvester"), countWorkersRole(spawn, "builder"), countWorkersRole(spawn, "repairer") );
         }else if(creep.memory.class=="soldier"){
             soldierBehavior.run(creep, Game.flags["AttackFlag"], Game.flags["AttackStructures"], Game.flags["DefendFlag"])
+        }else if(creep.memory.class=="claimer"){
+            claimerBehavior.run(creep);
         }
+
     }
         
     //Clear dead creeps

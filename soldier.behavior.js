@@ -14,8 +14,8 @@ var soldierBehavior = {
         	}	
         }
 
-		var groupLocation= [17,12];
-		var targetRoom = "E31N14"; //Room number to attack
+		var groupLocation= [34,8];
+		var targetRoom = "E31N11"; //Room number to attack
 		var invadeEntrancePoint = new RoomPosition(34, 34, targetRoom);
         var originRoom = "E31N13"; //Room to retreat to
 

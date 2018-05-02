@@ -1,8 +1,8 @@
 var workerBehavior = {
 
 	run: function(spawn, creep, harvestersCount, buildersCount, repairersCount){
-		var harvesters = 5;
-		var repairers = 1;
+		var harvesters = 6;
+		var repairers = 0;
 		var builders = 1;
 
 		var idleArea = [10,14]
@@ -48,7 +48,7 @@ var workerBehavior = {
 		if(creep.memory.needResources){
 
 			var droppedEnergy =creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES , (d) => {return (d.resourceType == RESOURCE_ENERGY)})
-			if(droppedEnergy && creep.pos.getRangeTo(droppedEnergy)<=4){
+			if(droppedEnergy && creep.pos.getRangeTo(droppedEnergy)<=3){
 				creep.say("pickup...")
 				if(creep.pickup(droppedEnergy) == ERR_NOT_IN_RANGE) {
 	                creep.moveTo(droppedEnergy, {visualizePathStyle: {stroke: creep.memory.color}});
@@ -80,7 +80,9 @@ var workerBehavior = {
 					var targets = creep.pos.findClosestByRange(FIND_STRUCTURES, {
 						filter: (structure) => {
 							return (structure.structureType == STRUCTURE_EXTENSION ||
-								structure.structureType == STRUCTURE_SPAWN) 
+								structure.structureType == STRUCTURE_SPAWN ||
+								structure.structureType == STRUCTURE_TOWER
+								) 
 								&& structure.energy < structure.energyCapacity;
 							}
 						});
