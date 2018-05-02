@@ -4,16 +4,63 @@
 var workerFactory = require('workerFactory');
 var workerBehavior = require('workerBehavior');
 
-var towerBehavior = require('towerBehavior');
+var soldierFactory = require('soldier.factory');
+var soldierBehavior = require('soldier.behavior');
 
+var towerBehavior = require('towerBehavior');
 
 
 module.exports.loop = function () {
     
-    var spawn = Game.spawns["Chester"]
+    // Game.creeps["Soldier5752591"].moveTo(new RoomPosition(10, 1, "E31N13"))
+    // Game.creeps["Soldier5752591"].attack(Game.getObjectById("5ae8bdae692254390601d145"))
+    // if(Game.creeps["Soldier5752796"].attack(Game.getObjectById("5ae8bdae692254390601d145")) == ERR_NOT_IN_RANGE){
+    //     Game.creeps["Soldier5752796"].moveTo(Game.getObjectById("5ae8bdae692254390601d145"));
+    // }
     
-    workerFactory.run(spawn, spawn.room.find(FIND_MY_CREEPS).length);
+    var spawn = Game.spawns["Chester"]
+    var maxWorkers = 14;
 
+    var enemiesInBase = spawn.room.find(FIND_HOSTILE_CREEPS, 
+        {filter: (creep) => {  return (creep.memory.class == "worker"); }}).length;
+    if(enemiesInBase){
+        maxWorkers = 6;
+    }
+    
+    var currentWorkers = spawn.room.find(FIND_MY_CREEPS, 
+        {filter: (creep) => {  return (creep.memory.class == "worker"); }}).length;
+    
+    //If we have less workers than we want, make more workers
+    if(currentWorkers < maxWorkers){
+        workerFactory.run(spawn, spawn.room.find(FIND_MY_CREEPS).length, maxWorkers);
+    }
+    //If war flag is red, spawn soldiers
+    else if(Game.flags["WarFlag"].color==1){
+        var tanksCount =  Game.spawns["Chester"].room.find(FIND_CREEPS, 
+            {filter: (creep) => {  return (creep.memory.role == "tank"); }}).length;
+        // if(tanksCount <1){
+        //     soldierFactory.run(spawn, "tank");
+        // }else{
+            soldierFactory.run(spawn, "warrior");
+        // }
+    }else{
+        console.log("nothing to spawn... " + Game.time);
+    }
+    
+
+    
+
+    // var testCreep = Game.creeps["Test"];
+    // if(testCreep){
+    //     if(testCreep.room.name == "E31N13"){
+    //         testCreep.say("to E30N13")
+    //         testCreep.moveTo(new RoomPosition(44,28, "E30N13"), {visualizePathStyle: {stroke: "#ff00ff"}});
+    //     }else{
+    //         testCreep.say("I did it!");
+    //         testCreep.moveTo(44,28, {visualizePathStyle: {stroke: "#ff00ff"}});
+    //     }
+    // }
+    
 
     //Tower actions
     var towers = spawn.room.find(FIND_STRUCTURES, 
@@ -21,11 +68,13 @@ module.exports.loop = function () {
         });
     towerBehavior.run(towers);
 
-    //Worker actions
+    //Creeps actions
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
         if(creep.memory.class=="worker"){
             workerBehavior.run(creep, countWorkersRole(spawn, "harvester"), countWorkersRole(spawn, "builder"), countWorkersRole(spawn, "repairer") );
+        }else if(creep.memory.class=="soldier"){
+            soldierBehavior.run(creep, Game.flags["AttackFlag"], Game.flags["AttackStructures"], Game.flags["DefendFlag"])
         }
     }
         

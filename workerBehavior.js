@@ -2,11 +2,10 @@ var workerBehavior = {
 
 	run: function(creep, harvestersCount, buildersCount, repairersCount){
 		var harvesters = 5;
-		var builders = 5;
 		var repairers = 1;
-		var workersAllowedInLocationZero = 3;
+		var builders = 1;
 
-		var idleArea = [15,10]
+		var idleArea = [10,14]
 
 		var harvesterColor = "#ffa500"
 		var builderColor = "#0000ff"
@@ -162,7 +161,7 @@ var workerBehavior = {
 		 					{filter: (creep) => {  return (creep.memory.mineLocation == 1); }
 		 				}).length;
 		 			console.log("mineLoc 0 count: "+locationZeroCount +  " -- mineLoc 1 count: "+locationOneCount);
-					if(locationZeroCount-2 <= locationOneCount){
+					if(locationZeroCount <= locationOneCount){
 						return 0;
 					}else{
 						return 1;
@@ -171,24 +170,24 @@ var workerBehavior = {
 				}
 		
 				if(harvestersCount < harvesters){ //Check if harvesters are needed
-					console.log('harvesters: '+  harvestersCount);
+					console.log('previous harvesters: '+  harvestersCount);
 					creep.memory.role = "harvester";
 					creep.memory.color = harvesterColor;
 					var location = getMineLocation(Game.spawns["Chester"]);
 					creep.memory.mineLocation = location;
 					creep.say("🐾 harvester");
-				}else if(buildersCount < builders){ //Check if builders are needed
-					console.log('builders: '+ buildersCount);
-					creep.memory.role = "builder";
-					creep.memory.color = builderColor;
-					creep.say("🚧 builder");
-					var location = getMineLocation(Game.spawns["Chester"]);
-					creep.memory.mineLocation = location;
 				}else if(repairersCount < repairers){
-					console.log('repairersCount: '+ repairersCount);
+					console.log('previous repairersCount: '+ repairersCount);
 					creep.memory.role = "repairer";
 					creep.memory.color = repairerColor;
 					creep.say("🔧 repairer");
+					var location = getMineLocation(Game.spawns["Chester"]);
+					creep.memory.mineLocation = location;
+				}else if(buildersCount < builders){ //Check if builders are needed
+					console.log('previous builders: '+ buildersCount);
+					creep.memory.role = "builder";
+					creep.memory.color = builderColor;
+					creep.say("🚧 builder");
 					var location = getMineLocation(Game.spawns["Chester"]);
 					creep.memory.mineLocation = location;
 				}else{

@@ -12,9 +12,24 @@ var roleWarrior = {
     
 
     /** @param {Creep} creep **/
-    run: function(creep) {
+    run: function(creep, attackFlag, defendFlag) {
+        var targetRoom = "E31N14"; //Room number to attack
+        var originRoom = "E31N13"; //Room to retreat to
         var warriorLookout = [25,25]
-        if(creep) {
+        if(defendFlag.color==1) {
+            if(creep.room.name == originRoom){
+                var closestHostile = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+            if(closestHostile) {
+                if(creep.attack(closestHostile) ==  ERR_NOT_IN_RANGE) {
+                    creep.moveTo(closestHostile, {visualizePathStyle: {stroke: '#ff0000'}});
+                }
+            }else{
+                creep.moveTo(warriorLookout[0], warriorLookout[1], {visualizePathStyle: {stroke: '#ff0000'}});
+            }
+            }
+        }else{
+             if()
+            var closestHostileTower = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES);
             var closestHostile = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
             if(closestHostile) {
                 if(creep.attack(closestHostile) ==  ERR_NOT_IN_RANGE) {

@@ -3,9 +3,8 @@ var workerFactory = {
     
 
 
-    run: function(spawn, workerCount){
+    run: function(spawn, workerCount, maxWorkers){
 
-        var maxWorkers = 15;
     	var newName = "Worker" + Game.time;
     	var workerMaxLevel = Math.trunc(spawn.room.energyCapacityAvailable /50);
         var energyInRoom = Math.trunc(spawn.room.energyAvailable /50);
@@ -14,7 +13,7 @@ var workerFactory = {
         var carryCost = 1;
 
         //Ensure we aren't already spawning a creep and that we have a minimum of 300 energy
-        if(!spawn.spawning && workerCount < maxWorkers){
+        if(!spawn.spawning){
             // console.log('need to spawn another')
             // console.log("workerCount: " + workerCount)
         	//If there is already at least 1 Worker
@@ -29,18 +28,18 @@ var workerFactory = {
                     var totalPrice = 0;
                     for(var i=0; i<prices.length; i++){totalPrice += prices[i];}
                    
-                    var enhancedAttributes = [WORK, CARRY, WORK, WORK, CARRY]
-                    var enhancedAttributesPrices = [workCost, carryCost, workCost, workCost, carryCost]
+                    var enhancedAttributes = [WORK, CARRY, MOVE, WORK, CARRY]
+                    var enhancedAttributesPrices = [workCost, carryCost, moveCost, workCost, carryCost]
         			var canEnhance = true;
                     var i =0;
-                    console.log("\t\t" +"|==============");
-                    console.log("\t\t" +"total price: "+ totalPrice);
-                    console.log("\t\t" +"max level: " + workerMaxLevel);
+                    // console.log("\t\t" +"|==============");
+                    // console.log("\t\t" +"total price: "+ totalPrice);
+                    // console.log("\t\t" +"max level: " + workerMaxLevel);
                     while((totalPrice < workerMaxLevel) && canEnhance){
                         canEnhance = false;
                         //Check if we can add next attribute in list
                         if(totalPrice + enhancedAttributesPrices[i] <=workerMaxLevel){
-                            console.log("\t\t\t" +"can add: " + enhancedAttributes[i])
+                            // console.log("\t\t\t" +"can add: " + enhancedAttributes[i])
                             // console.log('adding enhancement: ' + i + enhancedAttributes[i]);
                             attributes.push(enhancedAttributes[i]);
                             totalPrice += enhancedAttributesPrices[i];
@@ -48,7 +47,7 @@ var workerFactory = {
                             // console.log("total price: "+ totalPrice);
                             // console.log("1enhance? : " + (totalPrice < workerMaxLevel && canEnhance));
                         }else{ //Else check if we can add any other attribute
-                            console.log("\t\t\t" +"too expensive to add enhancement, checking for cheaper ones")
+                            // console.log("\t\t\t" +"too expensive to add enhancement, checking for cheaper ones")
                             // console.log("total price: "+ totalPrice);
                             // console.log("can enhance: "+ canEnhance);
 

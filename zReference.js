@@ -56,6 +56,9 @@ Game.spawns["Chester"].room.find(FIND_STRUCTURES,
  	 "Worker1",  {memory: {class: 'worker', role : null,  level: 13, needResources : true, 
  	 mineLocation: Math.floor(Math.random() * 2)}});
 
+ Game.spawns["Chester"].spawnCreep(
+ 	["move", "move","move","move",], "Test",  {memory: {class: 'test', role : "scout",  level: 4}});
+
 //Emojis
 creep.say('🚧 build');
 creep.say('🔄 harvest');
