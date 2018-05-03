@@ -30,7 +30,7 @@ module.exports.loop = function () {
     //If we are under attack
     var enemiesInBase = spawn.room.find(FIND_HOSTILE_CREEPS).length;
     if(enemiesInBase){
-        Game.flags["AttackFlag"].setColor(1);
+        Game.flags["WarFlag"].setColor(1);
         maxWorkers = 6;
         myCreepsCount = spawn.room.find(FIND_MY_CREEPS).length;
         if(myCreepsCount == 0){

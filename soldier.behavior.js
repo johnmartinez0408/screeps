@@ -14,6 +14,7 @@ var soldierBehavior = {
         	}	
         }
 
+        var attackOverride = null; //id of entity to attack first
 		var groupLocation= [34,8];
 		var targetRoom = "E31N11"; //Room number to attack
 		var invadeEntrancePoint = new RoomPosition(34, 34, targetRoom);
@@ -40,49 +41,54 @@ var soldierBehavior = {
 				regroup(creep);
 			}else if(attackFlag.color == 1){ //If it's red flag, attacking
 				if(creep.room.name == targetRoom){ //if we in our target room
-					// console.log("in enemy room");
-					//Find hostiles of different types nearby
-					var closestHostileTower = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES,
-						{filter: (structure) => {return (structure.structureType == STRUCTURE_TOWER);}
-			            });
-					var closestHostileSpawn = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES,
-						{filter: (structure) => {return (structure.structureType == STRUCTURE_SPAWN);}
-			            });
-					var closestHostileStructure =  creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES);
-					var closestHostileCreep = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-					
-					if(attackStructuresFlag.color == 1){ //If attack structures is red
-						//Set attack priority for towers > spawns > structures > creeps
-						if(closestHostileTower){
-							attackMove(creep, closestHostileTower)
-						}else if(closestHostileSpawn){
-							attackMove(creep, closestHostileSpawn)
-						}else if(closestHostileStructure){
-							attackMove(creep, closestHostileStructure)
-						}else if(closestHostileCreep){
-							attackMove(creep, closestHostileCreep)
-						}
-						else{
-							regroup(creep);
-						}
-					}else{
-						// console.log("in my room");
-						//Set attack priority for creeps > towers > spawns > structures
-						if(closestHostileCreep){
-							attackMove(creep, closestHostileCreep)
-						}
-						else if(closestHostileTower){
-							attackMove(creep, closestHostileTower)
-						}else if(closestHostileSpawn){
-							attackMove(creep, closestHostileSpawn)
-						}else if(closestHostileStructure){
-							attackMove(creep, closestHostileStructure)
-						}
-						else{
-							regroup(creep);
+
+					if(Game.getObjectById(attackOverride)){
+						attackMove(creep, Game.getObjectById(attackOverride));
+					}
+					else{ //Else we don't have an attack override
+						// console.log("in enemy room");
+						//Find hostiles of different types nearby
+						var closestHostileTower = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES,
+							{filter: (structure) => {return (structure.structureType == STRUCTURE_TOWER);}
+				            });
+						var closestHostileSpawn = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES,
+							{filter: (structure) => {return (structure.structureType == STRUCTURE_SPAWN);}
+				            });
+						var closestHostileStructure =  creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES);
+						var closestHostileCreep = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+						
+						if(attackStructuresFlag.color == 1){ //If attack structures is red
+							//Set attack priority for towers > spawns > structures > creeps
+							if(closestHostileTower){
+								attackMove(creep, closestHostileTower)
+							}else if(closestHostileSpawn){
+								attackMove(creep, closestHostileSpawn)
+							}else if(closestHostileStructure){
+								attackMove(creep, closestHostileStructure)
+							}else if(closestHostileCreep){
+								attackMove(creep, closestHostileCreep)
+							}
+							else{
+								regroup(creep);
+							}
+						}else{
+							// console.log("in my room");
+							//Set attack priority for creeps > towers > spawns > structures
+							if(closestHostileCreep){
+								attackMove(creep, closestHostileCreep)
+							}
+							else if(closestHostileTower){
+								attackMove(creep, closestHostileTower)
+							}else if(closestHostileSpawn){
+								attackMove(creep, closestHostileSpawn)
+							}else if(closestHostileStructure){
+								attackMove(creep, closestHostileStructure)
+							}
+							else{
+								regroup(creep);
+							}
 						}
 					}
-
 				}else{ //We are not in our target room
 					// console.log("moving to room");
 					creep.moveTo(invadeEntrancePoint);

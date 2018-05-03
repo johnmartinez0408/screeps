@@ -10,8 +10,8 @@ var claimerFactory = {
 
         var energyInRoom = spawn.room.energyAvailable;
 
-    	var attributes =[MOVE, CLAIM, MOVE, CLAIM]
-    	var prices = [moveCost, claimCost, moveCost, claimCost]
+    	var attributes =[MOVE, CLAIM]
+    	var prices = [moveCost, claimCost]
     	var totalPrice = 0;
     	for(var i=0; i<prices.length; i++){totalPrice += prices[i];}
 

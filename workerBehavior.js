@@ -2,12 +2,12 @@ var workerBehavior = {
 
 	run: function(spawn, creep, harvestersCount, buildersCount, repairersCount){
 		var harvesters = 6;
-		var repairers = 0;
-		var builders = 1;
+		var repairers = 1;
+		var builders = 2;
 
 		var idleArea = [10,14]
 
-		var harvesterColor = "#ffa500"
+		var harvesterColor = "#ff0000"
 		var builderColor = "#0000ff"
 		var upgraderColor = "#00ff00"
 		var repairerColor = "#29ffec"
@@ -47,13 +47,13 @@ var workerBehavior = {
 		//If creep isn't at capacity in resources, go get more
 		if(creep.memory.needResources){
 
-			var droppedEnergy =creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES , (d) => {return (d.resourceType == RESOURCE_ENERGY)})
-			if(droppedEnergy && creep.pos.getRangeTo(droppedEnergy)<=3){
-				creep.say("pickup...")
-				if(creep.pickup(droppedEnergy) == ERR_NOT_IN_RANGE) {
-	                creep.moveTo(droppedEnergy, {visualizePathStyle: {stroke: creep.memory.color}});
-	            }
-			}else{
+			// var droppedEnergy =creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES , (d) => {return (d.resourceType == RESOURCE_ENERGY)})
+			// if(droppedEnergy && creep.pos.getRangeTo(droppedEnergy)<=3){
+			// 	creep.say("pickup...")
+			// 	if(creep.pickup(droppedEnergy) == ERR_NOT_IN_RANGE) {
+	  //               creep.moveTo(droppedEnergy, {visualizePathStyle: {stroke: creep.memory.color}});
+	  //           }
+			// }else{
 				var sources = creep.room.find(FIND_SOURCES);
 	            var sourceToMine = 0;
 	            if(sources.length > 1 ){ //If there's more than 1 source to mine
@@ -63,10 +63,19 @@ var workerBehavior = {
 			        	console.log("No Mine Location for: " + creep);
 			        }
 	     	    }
-	            if(creep.harvest(sources[sourceToMine]) == ERR_NOT_IN_RANGE) {
-	                creep.moveTo(sources[sourceToMine], {visualizePathStyle: {stroke: creep.memory.color}});
-	            }
-			}
+				if(sources[sourceToMine].energy ==0){ //If your mine is empty, get energy from reserves
+					// console.log("no resources")
+					// console.log(creep.withdraw(creep.room.storage))
+					var spaceToCarry = creep.carryCapacity - creep.carry.energy;
+					if(creep.withdraw(creep.room.storage, RESOURCE_ENERGY, spaceToCarry) == ERR_NOT_IN_RANGE) {
+		                creep.moveTo(creep.room.storage, {visualizePathStyle: {stroke: creep.memory.color}});
+		            }
+				}else{
+					if(creep.harvest(sources[sourceToMine]) == ERR_NOT_IN_RANGE) {
+	                	creep.moveTo(sources[sourceToMine], {visualizePathStyle: {stroke: creep.memory.color}});
+	            	}
+				}
+			// }
 			
 		}
 
@@ -185,7 +194,7 @@ var workerBehavior = {
 		 					{filter: (creep) => {  return (creep.memory.mineLocation == 1); }
 		 				}).length;
 		 			console.log("mineLoc 0 count: "+locationZeroCount +  " -- mineLoc 1 count: "+locationOneCount);
-					if(locationZeroCount <= locationOneCount){
+					if(locationZeroCount-1 <= locationOneCount){
 						return 0;
 					}else{
 						return 1;

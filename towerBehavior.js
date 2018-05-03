@@ -31,7 +31,7 @@ var towerBehavior = {
                 var closestDamagedStructure =  tower.pos.findClosestByRange(FIND_STRUCTURES, 
                     {filter: (structure) => {return (structure.hits < structure.hitsMax)}});
                 if(closestDamagedStructure && (tower.energy > tower.energyCapacity/2)) {
-                    tower.repair(closestDamagedBarrier);
+                    tower.repair(closestDamagedStructure);
                 }
             }
 
