@@ -4,20 +4,22 @@ var soldierBehavior = {
 		
 		var attackMove = function(creep, target){
 			if(creep.attack(target) ==  ERR_NOT_IN_RANGE) {
-			    creep.moveTo(target);
+			    creep.moveTo(target, {visualizePathStyle: {stroke: soldierAttackMoveColor}});
 			}
 		}
 
         var regroup = function(creep){
         	if(creep.room.name == originRoom){
-        		creep.moveTo(groupLocation[0], groupLocation[1]);
+        		creep.moveTo(groupLocation[0], groupLocation[1], {visualizePathStyle: {stroke: soldierMoveColor}});
         	}	
         }
 
+        var soldierMoveColor = "#33ff33"; //purple if moving
+        var soldierAttackMoveColor = "ff0000"; //red if attack moving
         var attackOverride = null; //id of entity to attack first
-		var groupLocation= [34,8];
+		var groupLocation= [14, 42];
 		var targetRoom = "E31N11"; //Room number to attack
-		var invadeEntrancePoint = new RoomPosition(34, 34, targetRoom);
+		var invadeEntrancePoint = new RoomPosition(34, 8, targetRoom);
         var originRoom = "E31N13"; //Room to retreat to
 
         if(defendFlag.color == 1){//If defend flag is red, go defend
@@ -26,13 +28,13 @@ var soldierBehavior = {
                 var closestHostile = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
             	if(closestHostile) {
 	                if(creep.attack(closestHostile) ==  ERR_NOT_IN_RANGE) {
-	                    creep.moveTo(closestHostile);
+	                    creep.moveTo(closestHostile, {visualizePathStyle: {stroke: soldierMoveColor}});
 	                }
 	            }else{
 	            	regroup(creep);
 	            }
             }else{ //If we are not in our origin room
-                creep.moveTo(new RoomPosition(groupLocation[0], groupLocation[1], originRoom)); //Move to origin room
+                creep.moveTo(new RoomPosition(groupLocation[0], groupLocation[1], originRoom), {visualizePathStyle: {stroke: soldierMoveColor}}); //Move to origin room
             }
         }else{ //We are not defending
         	//If it's white flag, not attacking
@@ -91,7 +93,7 @@ var soldierBehavior = {
 					}
 				}else{ //We are not in our target room
 					// console.log("moving to room");
-					creep.moveTo(invadeEntrancePoint);
+					creep.moveTo(invadeEntrancePoint, {visualizePathStyle: {stroke: soldierMoveColor}});
 				}
 			}
 			else{

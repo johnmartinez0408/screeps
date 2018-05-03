@@ -32,9 +32,11 @@ var soldierFactory = {
                 }else if(soldierClass=="tank"){
                     attributes.push(ATTACK);
                     totalCost += attackCost;
-
                     enhancedAttributes = [TOUGH, MOVE,TOUGH,MOVE, MOVE]
-                    enhancedAttributesCosts = [toughCost, moveCost]
+                    enhancedAttributesCosts = [toughCost, moveCost, toughCost, moveCost, moveCost]
+                }else if(soldierClass=="bruiser"){
+                    enhancedAttributes =        [TOUGH,     MOVE,     MOVE,    ATTACK,      MOVE,    TOUGH,    MOVE ,       TOUGH]
+                    enhancedAttributesCosts = [toughCost, moveCost, moveCost, attackCost, moveCost, toughCost, moveCost, toughCost]
                 }
                 console.log(totalCost)
 
@@ -68,6 +70,7 @@ var soldierFactory = {
                 } //End while loop
                 console.log('Spawning new Soldier: ' + newName + " -- level: " + totalCost)
                 attributes.sort();
+                attributes.reverse();
                 console.log('attributes: ' + attributes)
                 try{
                 	 spawn.spawnCreep(attributes, newName,

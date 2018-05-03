@@ -74,7 +74,7 @@ var workerFactory = {
                     console.log('attributes: ' + attributes)
                     spawn.spawnCreep(attributes, newName,
                     {memory: {class: 'worker', role : null,  level: totalPrice, needResources : false, mineLocation: Math.floor(Math.random() * 2)}});
-                    console.log("new worker count: " + (workerCount+1));
+                    console.log("old worker count: " + (workerCount));
                     console.log("==============|");
         		}
         	}else{ //Else make simple worker

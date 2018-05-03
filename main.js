@@ -25,12 +25,14 @@ module.exports.loop = function () {
     var makeEmergencySoldiers = false;
     var claimerTarget = "E31N14";
     var spawn = Game.spawns["Chester"]
-    var maxWorkers = 13;
+    var maxWorkers = 11;
 
     //If we are under attack
     var enemiesInBase = spawn.room.find(FIND_HOSTILE_CREEPS).length;
     if(enemiesInBase){
         Game.flags["WarFlag"].setColor(1);
+        makeEmergencySoldiers = true;
+        console.log("enemies in base, making emergency soldiers");
         maxWorkers = 6;
         myCreepsCount = spawn.room.find(FIND_MY_CREEPS).length;
         if(myCreepsCount == 0){
@@ -40,20 +42,29 @@ module.exports.loop = function () {
     
     var currentWorkers = spawn.room.find(FIND_MY_CREEPS, 
         {filter: (creep) => {  return (creep.memory.class == "worker"); }}).length;
-    
+        // console.log("currentWorkers" + currentWorkers);
+
     //If we have less workers than we want, make more workers
     if(currentWorkers < maxWorkers){
         workerFactory.run(spawn, spawn.room.find(FIND_MY_CREEPS).length, maxWorkers);
     }
     //If war flag is red, spawn soldiers
     else if(Game.flags["WarFlag"].color==1){
-        var tanksCount =  spawn.room.find(FIND_CREEPS, 
-            {filter: (creep) => {  return (creep.memory.role == "tank"); }}).length;
-        // if(tanksCount <1){
-        //     soldierFactory.run(spawn, "tank");
-        // }else{
-            soldierFactory.run(spawn, "warrior");
-        // }
+   
+            if(makeEmergencySoldiers){
+                soldierFactory.run(spawn, "emergencyWarrior");
+            }else{
+                // var tanksCount =  spawn.room.find(FIND_CREEPS, 
+                //     {filter: (creep) => {  return (creep.memory.role == "tank"); }}).length;
+                // if(tanksCount <1){
+                //     soldierFactory.run(spawn, "tank");
+                // }else{
+                        // soldierFactory.run(spawn, "warrior");
+                        soldierFactory.run(spawn, "bruiser");
+                // }
+            }
+            
+
     }else if(makeClaimers){
         claimerFactory.run(spawn, claimerTarget);
     }

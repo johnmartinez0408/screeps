@@ -1,9 +1,9 @@
 var workerBehavior = {
 
 	run: function(spawn, creep, harvestersCount, buildersCount, repairersCount){
-		var harvesters = 6;
+		var harvesters = 7;
 		var repairers = 1;
-		var builders = 2;
+		var builders = 1;
 
 		var idleArea = [10,14]
 
@@ -89,8 +89,8 @@ var workerBehavior = {
 					var targets = creep.pos.findClosestByRange(FIND_STRUCTURES, {
 						filter: (structure) => {
 							return (structure.structureType == STRUCTURE_EXTENSION ||
-								structure.structureType == STRUCTURE_SPAWN ||
-								structure.structureType == STRUCTURE_TOWER
+								structure.structureType == STRUCTURE_SPAWN 
+								|| structure.structureType == STRUCTURE_TOWER
 								) 
 								&& structure.energy < structure.energyCapacity;
 							}
