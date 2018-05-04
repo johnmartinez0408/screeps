@@ -23,7 +23,7 @@ module.exports.loop = function () {
     // }
     var makeClaimers = false;
     var makeEmergencySoldiers = false;
-    var claimerTarget = "E31N14";
+    var claimerTarget = "E31N12";
     var spawn = Game.spawns["Chester"]
     var maxWorkers = 11;
 
@@ -57,11 +57,13 @@ module.exports.loop = function () {
                 // var tanksCount =  spawn.room.find(FIND_CREEPS, 
                 //     {filter: (creep) => {  return (creep.memory.role == "tank"); }}).length;
                 // if(tanksCount <1){
-                //     soldierFactory.run(spawn, "tank");
+                    // soldierFactory.run(spawn, "tank");
                 // }else{
-                        // soldierFactory.run(spawn, "warrior");
-                        soldierFactory.run(spawn, "bruiser");
+                        soldierFactory.run(spawn, "warrior");
+                        // soldierFactory.run(spawn, "bruiser");
+                        // soldierFactory.run(spawn, "archer");
                 // }
+                // soldierFactory.run(spawn, "warrior");
             }
             
 

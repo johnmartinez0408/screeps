@@ -28,8 +28,8 @@ var workerFactory = {
                     var totalPrice = 0;
                     for(var i=0; i<prices.length; i++){totalPrice += prices[i];}
                    
-                    var enhancedAttributes = [MOVE, WORK, CARRY]
-                    var enhancedAttributesPrices = [moveCost, workCost, carryCost]
+                    var enhancedAttributes = [MOVE, CARRY, WORK]
+                    var enhancedAttributesPrices = [moveCost, carryCost, workCost]
         			var canEnhance = true;
                     var i =0;
                     // console.log("\t\t" +"|==============");
@@ -74,7 +74,7 @@ var workerFactory = {
                     console.log('attributes: ' + attributes)
                     spawn.spawnCreep(attributes, newName,
                     {memory: {class: 'worker', role : null,  level: totalPrice, needResources : false, mineLocation: Math.floor(Math.random() * 2)}});
-                    console.log("old worker count: " + (workerCount));
+                    console.log("old worker count: " + workerCount);
                     console.log("==============|");
         		}
         	}else{ //Else make simple worker
