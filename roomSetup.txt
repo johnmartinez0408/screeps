@@ -1,0 +1,10 @@
+Requirements:
+
+- Spawns must be added to main.js
+- Spawns must have a memory field for all of the locations the miners need to be in to mine (the location with a container) they should use the following example as their format: 
+
+	spawn.memory.mines = [{pos: {x:11, y:7, room: "E31N13"}},{pos: {x:13, y:28, room: "E31N13"}}]
+
+- Spwns must have a memory field for the minimum number of workers of each kind they should have. They should use the following example as their format: 
+
+	spawn.memory.minWorkers = {miners: 2, haulers: 2, upgradeBuilders: 1}

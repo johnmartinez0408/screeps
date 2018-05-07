@@ -11,9 +11,10 @@ var claimerBehavior = {
 		    if(controller){
 		    	// console.log("test");
 		    	// console.log(creep.attackController(controller));
-		    	if(creep.attackController(controller) == ERR_NOT_IN_RANGE){
-		    		
-		   			creep.moveTo(controller);
+		    	// if(creep.attackController(controller) == ERR_NOT_IN_RANGE){
+		    	// if(creep.reserveController(controller) == ERR_NOT_IN_RANGE){
+                if(creep.claimController(controller) == ERR_NOT_IN_RANGE){
+		   			creep.moveTo(controller,  {visualizePathStyle: {stroke: "0000ff"}});
 		    	}
 			}else{
 				creep.say("no controller");

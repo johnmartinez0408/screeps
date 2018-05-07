@@ -1,9 +1,10 @@
 var workerBehavior = {
 
 	run: function(spawn, creep, harvestersCount, buildersCount, repairersCount){
-		var harvesters = 7;
-		var repairers = 1;
-		var builders = 1;
+		var harvesters = 4;
+		var builders = 3;
+		var repairers = 2;
+		
 
 		var idleArea = [10,14]
 
@@ -54,27 +55,41 @@ var workerBehavior = {
 	  //               creep.moveTo(droppedEnergy, {visualizePathStyle: {stroke: creep.memory.color}});
 	  //           }
 			// }else{
-				var sources = creep.room.find(FIND_SOURCES);
-	            var sourceToMine = 0;
-	            if(sources.length > 1 ){ //If there's more than 1 source to mine
-					if(creep.memory.mineLocation == 1){ //mine first or second source depending on creep's ID
-						sourceToMine = 1;
-			        }else if(creep.memory.mineLocation != 0){
-			        	console.log("No Mine Location for: " + creep);
-			        }
-	     	    }
-				if(sources[sourceToMine].energy ==0){ //If your mine is empty, get energy from reserves
-					// console.log("no resources")
-					// console.log(creep.withdraw(creep.room.storage))
-					var spaceToCarry = creep.carryCapacity - creep.carry.energy;
-					if(creep.withdraw(creep.room.storage, RESOURCE_ENERGY, spaceToCarry) == ERR_NOT_IN_RANGE) {
-		                creep.moveTo(creep.room.storage, {visualizePathStyle: {stroke: creep.memory.color}});
+				var spaceToCarry = creep.carryCapacity - creep.carry.energy;
+				var nearestContainer = creep.pos.findClosestByRange(FIND_STRUCTURES, 
+					{filter: (structure) => {return (structure.structureType == STRUCTURE_CONTAINER 
+						&& structure.store.energy >= spaceToCarry);}
+				});
+				if(nearestContainer){
+					if(creep.withdraw(nearestContainer, RESOURCE_ENERGY, spaceToCarry) == ERR_NOT_IN_RANGE) {
+		                creep.moveTo(nearestContainer, {visualizePathStyle: {stroke: creep.memory.color}});
 		            }
 				}else{
-					if(creep.harvest(sources[sourceToMine]) == ERR_NOT_IN_RANGE) {
-	                	creep.moveTo(sources[sourceToMine], {visualizePathStyle: {stroke: creep.memory.color}});
-	            	}
+					var sources = creep.room.find(FIND_SOURCES);
+		            var sourceToMine = 0;
+		            if(sources.length > 1 ){ //If there's more than 1 source to mine
+						if(creep.memory.mineLocation == 1){ //mine first or second source depending on creep's ID
+							sourceToMine = 1;
+				        }else if(creep.memory.mineLocation != 0){
+				        	console.log(spawn.name);
+				        	console.log("No Mine Location for: " + creep);
+				        }
+		     	    }
+					if(sources[sourceToMine].energy ==0){ //If your mine is empty, get energy from reserves
+						// console.log("no resources")
+						// console.log(creep.withdraw(creep.room.storage))
+						var spaceToCarry = creep.carryCapacity - creep.carry.energy;
+						if(creep.withdraw(creep.room.storage, RESOURCE_ENERGY, spaceToCarry) == ERR_NOT_IN_RANGE) {
+			                creep.moveTo(creep.room.storage, {visualizePathStyle: {stroke: creep.memory.color}});
+			            }
+					}else{
+						if(creep.harvest(sources[sourceToMine]) == ERR_NOT_IN_RANGE) {
+		                	creep.moveTo(sources[sourceToMine], {visualizePathStyle: {stroke: creep.memory.color}});
+		            	}
+					}
 				}
+
+				
 			// }
 			
 		}
@@ -100,30 +115,36 @@ var workerBehavior = {
 							creep.moveTo(targets, {visualizePathStyle: {stroke: creep.memory.color}});
 						}
 					}else{
-						//If no normal targets available, make storage the new target
-						targets = creep.room.storage;
-						if(targets){
-							if(creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) { //Deposit energy into storage
-								creep.moveTo(targets, {visualizePathStyle: {stroke: creep.memory.color}});
-							}
-						}else{//If no available storage, move to idle area
-							creep.moveTo(idleArea[0],idleArea[1], {visualizePathStyle: {stroke: idleColor}});
+
+						if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+							creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: creep.memory.color}});
 						}
+						
+						//If no normal targets available, make storage the new target
+						// targets = creep.room.storage;
+						// if(targets){
+						// 	if(creep.transfer(targets, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) { //Deposit energy into storage
+						// 		creep.moveTo(targets, {visualizePathStyle: {stroke: creep.memory.color}});
+						// 	}
+						// }else{//If no available storage, move to idle area
+						// 	creep.moveTo(idleArea[0],idleArea[1], {visualizePathStyle: {stroke: idleColor}});
+						// }
 					}
 				}
 				else if(creep.memory.role == "builder"){//If this worker is a builder
 					if(harvestersCount == 0){
+						console.log(spawn.name);
 						console.log('harvesters: '+  harvestersCount);
 						creep.memory.role = "harvester";
 						creep.memory.color = harvesterColor;
 						creep.memory.mineLocation = 1;
 						creep.say("🐾 harvester")
 					}else{
-						var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-						if(targets.length) {
-						if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-							creep.moveTo(targets[0], {visualizePathStyle: {stroke: creep.memory.color}});
-						}
+						var targets = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+						if(targets) {
+							if(creep.build(targets) == ERR_NOT_IN_RANGE) {
+								creep.moveTo(targets, {visualizePathStyle: {stroke: creep.memory.color}});
+							}
 						}else{
 							// creep.moveTo(2,25);
 							creep.say('🍾 idle builder')
@@ -136,6 +157,7 @@ var workerBehavior = {
 					
 				}else if(creep.memory.role == "repairer"){
 					if(harvestersCount == 0){
+						console.log(spawn.name);
 						console.log('harvesters: '+  harvestersCount);
 						creep.memory.role = "harvester";
 						creep.memory.color = harvesterColor;
@@ -159,7 +181,7 @@ var workerBehavior = {
 							            creep.moveTo(closestDamagedStructure, {visualizePathStyle: {stroke: creep.memory.color}});
 							        }
 						        }else{
-						        	creep.moveTo(Game.spawns["Chester"].pos);
+						        	creep.moveTo(spawn.pos);
 						        	if(creep.memory.spaceGiven){
 						        		creep.memory.spaceGiven++;
 						        	}else{
@@ -174,6 +196,7 @@ var workerBehavior = {
 				}
 				else{ //Else, must be upgrader
 					if(harvestersCount == 0){
+						console.log(spawn.name);
 						console.log('harvesters: '+  harvestersCount);
 						creep.memory.role = "harvester";
 						creep.memory.color = harvesterColor;
@@ -187,14 +210,15 @@ var workerBehavior = {
 				}
 			}else{ //Else, this worker must not have a role
 				var getMineLocation = function(spawn){
-					var locationZeroCount = spawn.room.find(FIND_CREEPS, 
+					var locationZeroCount = spawn.room.find(FIND_MY_CREEPS, 
 		 					{filter: (creep) => {  return (creep.memory.mineLocation == 0); }
 		 				}).length;
-		 			var locationOneCount = spawn.room.find(FIND_CREEPS, 
+		 			var locationOneCount = spawn.room.find(FIND_MY_CREEPS, 
 		 					{filter: (creep) => {  return (creep.memory.mineLocation == 1); }
 		 				}).length;
+		 			console.log(spawn.name);
 		 			console.log("mineLoc 0 count: "+locationZeroCount +  " -- mineLoc 1 count: "+locationOneCount);
-					if(locationZeroCount-1 <= locationOneCount){
+					if(locationZeroCount < locationOneCount){
 						return 0;
 					}else{
 						return 1;
@@ -203,31 +227,34 @@ var workerBehavior = {
 				}
 		
 				if(harvestersCount < harvesters){ //Check if harvesters are needed
+					console.log(spawn.name);
 					console.log('previous harvesters: '+  harvestersCount);
 					creep.memory.role = "harvester";
 					creep.memory.color = harvesterColor;
-					var location = getMineLocation(Game.spawns["Chester"]);
+					var location = getMineLocation(spawn);
 					creep.memory.mineLocation = location;
 					creep.say("🐾 harvester");
-				}else if(repairersCount < repairers){
-					console.log('previous repairersCount: '+ repairersCount);
-					creep.memory.role = "repairer";
-					creep.memory.color = repairerColor;
-					creep.say("🔧 repairer");
-					var location = getMineLocation(Game.spawns["Chester"]);
-					creep.memory.mineLocation = location;
 				}else if(buildersCount < builders){ //Check if builders are needed
+					console.log(spawn.name);
 					console.log('previous builders: '+ buildersCount);
 					creep.memory.role = "builder";
 					creep.memory.color = builderColor;
 					creep.say("🚧 builder");
-					var location = getMineLocation(Game.spawns["Chester"]);
+					var location = getMineLocation(spawn);
+					creep.memory.mineLocation = location;
+				}else if(repairersCount < repairers){
+					console.log(spawn.name);
+					console.log('previous repairersCount: '+ repairersCount);
+					creep.memory.role = "repairer";
+					creep.memory.color = repairerColor;
+					creep.say("🔧 repairer");
+					var location = getMineLocation(spawn);
 					creep.memory.mineLocation = location;
 				}else{
 					creep.memory.role = "upgrader";
 					creep.memory.color = upgraderColor;
 					creep.say("⚡ upgrader")
-					var location = getMineLocation(Game.spawns["Chester"]);
+					var location = getMineLocation(spawn);
 					creep.memory.mineLocation = location;
 				}
 			}

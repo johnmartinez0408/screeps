@@ -73,6 +73,8 @@ var soldierFactory = {
                     if(i>enhancedAttributes.length-1){i=0;}
 
                 } //End while loop
+                console.log("----------------");
+                console.log(spawn.name);
                 console.log('Spawning new Soldier: ' + newName + " -- level: " + totalCost)
                 attributes.sort();
                 attributes.reverse();

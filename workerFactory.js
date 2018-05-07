@@ -28,8 +28,8 @@ var workerFactory = {
                     var totalPrice = 0;
                     for(var i=0; i<prices.length; i++){totalPrice += prices[i];}
                    
-                    var enhancedAttributes = [MOVE, CARRY, WORK]
-                    var enhancedAttributesPrices = [moveCost, carryCost, workCost]
+                    var enhancedAttributes = [WORK, MOVE, CARRY ]
+                    var enhancedAttributesPrices = [workCost, moveCost, carryCost]
         			var canEnhance = true;
                     var i =0;
                     // console.log("\t\t" +"|==============");
@@ -69,6 +69,7 @@ var workerFactory = {
                         // console.log(attributes);
 
                     }
+                    console.log(spawn.name);
                     console.log('Spawning new worker: ' + newName + " -- level: " + totalPrice)
                     attributes.sort();
                     console.log('attributes: ' + attributes)

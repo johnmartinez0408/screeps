@@ -24,11 +24,11 @@ var soldierBehavior = {
         }
 
         
-        var attackOverride = ""; //id of entity to attack first
-		var groupLocation= [20, 14];
+        var attackOverride = "5adeea0fbaf8e72a189f0895"; //id of entity to attack first
+		var groupLocation= [35, 16];
 		var groupOverride = null; //[20,20]
-		var targetRoom = "E31N11"; //Room number to attack
-		var invadeEntrancePoint = new RoomPosition(33, 10, targetRoom);
+		var targetRoom = "E31N14"; //Room number to attack
+		var invadeEntrancePoint = new RoomPosition(28, 20, targetRoom);
         var originRoom = "E31N13"; //Room to retreat to
 
         if(defendFlag.color == 1){//If defend flag is red, go defend
@@ -48,8 +48,17 @@ var soldierBehavior = {
         }else{ //We are not defending
         	//If it's white flag, not attacking
         	// console.log("attackFlag: "+attackFlag.color + " - "(attackFlag.color == 1));
+        	var closestHostileTower = creep.pos.findClosestByRange(FIND_HOSTILE_STRUCTURES,
+							{filter: (structure) => {return (structure.structureType == STRUCTURE_TOWER);}
+				            });
+
 			if(attackFlag.color == 10){ 
-				regroup(creep);
+				var closestHostileCreep = creep.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+				if(closestHostileCreep){
+					attackMove(creep, closestHostileCreep);
+				}else{
+					regroup(creep);
+				}
 			}else if(attackFlag.color == 1){ //If it's red flag, attacking
 				if(creep.room.name == targetRoom){ //if we in our target room
 					if(creep.memory.role == "archer"){
