@@ -40,6 +40,9 @@ Game.spawns["Chester"].room.find(FIND_STRUCTURES,
  Game.spawns["Chester"].room.find(FIND_CREEPS, 
  	{filter: (creep) => {  return (creep.memory.role == "harvester"); }}).length;
 
+Game.spawns["Pegasus"].room.find(FIND_CREEPS, 
+    {filter: (creep) => {  return (creep.memory.role == "repairer"); }}).length;
+
  //count creeps
  Game.spawns["Chester"].room.find(FIND_MY_CREEPS).length
 
@@ -56,8 +59,13 @@ Game.spawns["Chester"].room.find(FIND_STRUCTURES,
  	 "Worker1",  {memory: {class: 'worker', role : null,  level: 13, needResources : true, 
  	 mineLocation: Math.floor(Math.random() * 2)}});
 
- Game.spawns["Chester"].spawnCreep(
- 	["move", "move","move","move",], "Test",  {memory: {class: 'test', role : "scout",  level: 4}});
+ Game.spawns["Pegasus"].spawnCreep(
+ 	["carry","carry","carry", "work", "move", "move", "work", "move", "work"], "name",  {memory: {class: 'worker', role : "harvester",  level: 4, mineLocation: 0}});
+
+Game.spawns["Pegasus"].spawnCreep(
+    ["move","claim"], "claimer",  {memory: {class: 'claimer', targetRoom: "E62S"}});
+
+
 
 //Emojis
 creep.say('🚧 build');

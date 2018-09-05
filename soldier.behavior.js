@@ -25,9 +25,9 @@ var soldierBehavior = {
 
         
         var attackOverride = "5adeea0fbaf8e72a189f0895"; //id of entity to attack first
-		var groupLocation= [35, 16];
+		var groupLocation= [7, 19];
 		var groupOverride = null; //[20,20]
-		var targetRoom = "E31N14"; //Room number to attack
+		var targetRoom = "E31N13"; //Room number to attack
 		var invadeEntrancePoint = new RoomPosition(28, 20, targetRoom);
         var originRoom = "E31N13"; //Room to retreat to
 

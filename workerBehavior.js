@@ -1,10 +1,36 @@
 var workerBehavior = {
 
-	run: function(spawn, creep, harvestersCount, buildersCount, repairersCount){
-		var harvesters = 4;
-		var builders = 3;
-		var repairers = 2;
-		
+	run: function(creep, harvestersCount, buildersCount, repairersCount){
+		var harvesters = 5;
+		var builders = 2;
+		var repairers = 0;
+		 
+        var spawn = creep.room.find(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_SPAWN)
+                }
+            });
+
+        var getMineLocation = function(spawn){
+            var locationZeroCount = spawn.room.find(FIND_MY_CREEPS, 
+                {filter: (creep) => {  return (creep.memory.mineLocation == 0); }
+            }).length;
+            var locationOneCount = spawn.room.find(FIND_MY_CREEPS, 
+                {filter: (creep) => {  return (creep.memory.mineLocation == 1); }
+            }).length;
+            console.log(spawn.name);
+            console.log("mineLoc 0 count: "+locationZeroCount +  " -- mineLoc 1 count: "+locationOneCount);
+            if(locationZeroCount <= locationOneCount){
+                return 0;
+            }else{
+                return 1;
+            }
+            console.log("new mineLoc 0 count: "+locationZeroCount +  " -- new mineLoc 1 count: "+locationOneCount);
+        }
+        
+        if(spawn){
+            spawn = spawn[0];
+        }
 
 		var idleArea = [10,14]
 
@@ -30,7 +56,7 @@ var workerBehavior = {
 				creep.say('⚡ Upgr');
 			}else if(creep.memory.role == "repairer"){
 				creep.memory.spaceGiven = 0;
-				if(creep.memory.mineLocation==0){
+				if(creep.memory.mineLocation && creep.memory.mineLocation==0){
 					creep.memory.mineLocation = 1;
 				}else{
 					creep.memory.mineLocation = 0;
@@ -55,12 +81,13 @@ var workerBehavior = {
 	  //               creep.moveTo(droppedEnergy, {visualizePathStyle: {stroke: creep.memory.color}});
 	  //           }
 			// }else{
+                creep.memory.spaceGiven = 0;
 				var spaceToCarry = creep.carryCapacity - creep.carry.energy;
 				var nearestContainer = creep.pos.findClosestByRange(FIND_STRUCTURES, 
 					{filter: (structure) => {return (structure.structureType == STRUCTURE_CONTAINER 
 						&& structure.store.energy >= spaceToCarry);}
 				});
-				if(nearestContainer){
+				if(nearestContainer && false){
 					if(creep.withdraw(nearestContainer, RESOURCE_ENERGY, spaceToCarry) == ERR_NOT_IN_RANGE) {
 		                creep.moveTo(nearestContainer, {visualizePathStyle: {stroke: creep.memory.color}});
 		            }
@@ -140,19 +167,29 @@ var workerBehavior = {
 						creep.memory.mineLocation = 1;
 						creep.say("🐾 harvester")
 					}else{
-						var targets = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
-						if(targets) {
-							if(creep.build(targets) == ERR_NOT_IN_RANGE) {
-								creep.moveTo(targets, {visualizePathStyle: {stroke: creep.memory.color}});
-							}
-						}else{
-							// creep.moveTo(2,25);
-							creep.say('🍾 idle builder')
-							//Turn idle builder into upgrader
-							creep.memory.role = "upgrader";
-							creep.memory.color = upgraderColor;
-							creep.say("⚡ upgrader")
-						}
+                        if(creep.memory.spaceGiven && creep.memory.spaceGiven >= 1){
+    						var targets = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
+    						if(targets) {
+    							if(creep.build(targets) == ERR_NOT_IN_RANGE) {
+    								creep.moveTo(targets, {visualizePathStyle: {stroke: creep.memory.color}});
+    							}
+    						}else{
+    							// creep.moveTo(2,25);
+    							creep.say('🍾 idle builder')
+    							//Turn idle builder into upgrader
+    							creep.memory.role = "upgrader";
+    							creep.memory.color = upgraderColor;
+    							creep.say("⚡ upgrader")
+    						}
+                        }else{
+                            creep.moveTo(Game.spawns[creep.memory.spawn]);
+                            if(creep.memory.spaceGiven){
+                                creep.memory.spaceGiven = creep.memory.spaceGiven+1;
+                            }else{
+                                creep.memory.spaceGiven = 1;
+                            }
+                            
+                        }
 					}
 					
 				}else if(creep.memory.role == "repairer"){
@@ -167,7 +204,7 @@ var workerBehavior = {
 						var towers = creep.room.find(FIND_STRUCTURES, {
 							filter: (structure) => {return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;}
 						});
-						if(towers.length > 0) {
+						if(towers && towers.length > 0) {
 							if(creep.transfer(towers[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 								creep.moveTo(towers[0], {visualizePathStyle: {stroke: creep.memory.color}});
 							}
@@ -176,7 +213,7 @@ var workerBehavior = {
 					            filter: (structure) => {return (structure.hits < structure.hitsMax) && (structure.hits<25000);}
 					        });
 					        if(closestDamagedStructure){
-						        if(creep.memory.spaceGiven >= 3){
+						        if(creep.memory.spaceGiven >= 1){
 						        	if(creep.repair(closestDamagedStructure) == ERR_NOT_IN_RANGE) {
 							            creep.moveTo(closestDamagedStructure, {visualizePathStyle: {stroke: creep.memory.color}});
 							        }
@@ -189,7 +226,13 @@ var workerBehavior = {
 						        	}
 						        }
 							}else{
-								creep.moveTo(idleArea[0]. idleArea[1]);
+								console.log(spawn.name);
+                                console.log('previous builders: '+ buildersCount);
+                                creep.memory.role = "builder";
+                                creep.memory.color = builderColor;
+                                creep.say("🚧 builder");
+                                var location = getMineLocation(spawn);
+                                creep.memory.mineLocation = location;
 							}
 						}	
 					}
@@ -209,23 +252,7 @@ var workerBehavior = {
 					}
 				}
 			}else{ //Else, this worker must not have a role
-				var getMineLocation = function(spawn){
-					var locationZeroCount = spawn.room.find(FIND_MY_CREEPS, 
-		 					{filter: (creep) => {  return (creep.memory.mineLocation == 0); }
-		 				}).length;
-		 			var locationOneCount = spawn.room.find(FIND_MY_CREEPS, 
-		 					{filter: (creep) => {  return (creep.memory.mineLocation == 1); }
-		 				}).length;
-		 			console.log(spawn.name);
-		 			console.log("mineLoc 0 count: "+locationZeroCount +  " -- mineLoc 1 count: "+locationOneCount);
-					if(locationZeroCount < locationOneCount){
-						return 0;
-					}else{
-						return 1;
-					}
-					console.log("new mineLoc 0 count: "+locationZeroCount +  " -- new mineLoc 1 count: "+locationOneCount);
-				}
-		
+				
 				if(harvestersCount < harvesters){ //Check if harvesters are needed
 					console.log(spawn.name);
 					console.log('previous harvesters: '+  harvestersCount);

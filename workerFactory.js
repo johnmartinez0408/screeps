@@ -74,7 +74,7 @@ var workerFactory = {
                     attributes.sort();
                     console.log('attributes: ' + attributes)
                     spawn.spawnCreep(attributes, newName,
-                    {memory: {class: 'worker', role : null,  level: totalPrice, needResources : false, mineLocation: Math.floor(Math.random() * 2)}});
+                    {memory: {class: 'worker', role : null,  level: totalPrice, needResources : false, mineLocation: 0, spawn: spawn.name}});
                     console.log("old worker count: " + workerCount);
                     console.log("==============|");
         		}
@@ -83,7 +83,7 @@ var workerFactory = {
         		// console.log('Spawning new simple worker: ' + newName + " -- level: 3 - Simple Worker");
           //       console.log(workerCount);
                 spawn.spawnCreep([WORK, CARRY, MOVE],
-                {memory: {class: 'worker', level: "3 - Simple Worker", color: '#800080', mineLocation:0}});
+                {memory: {class: 'worker', level: "3 - Simple Worker", color: '#800080', mineLocation:0, spawn: spawn.name}});
         	}
         }
     }

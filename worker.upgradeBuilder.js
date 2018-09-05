@@ -44,13 +44,13 @@ var workerUpgradeBuilder = {
 				if(creep.withdraw(creep.room.storage, RESOURCE_ENERGY, spaceToCarry) == ERR_NOT_IN_RANGE) {
 					creep.moveTo(creep.memory.container, {visualizePathStyle: {stroke: creep.memory.color}});
 				}
-        	}else if(creep.room.find(FIND_STRUCTURES)){ //Else if we have a container with enough energy
-        		//Withdraw as much energy as possible from storage
+        	}else if(nearestContainer){ //Else if we have a container with enough energy
+        		//Withdraw as much energy as possible from container
 				if(creep.withdraw(nearestContainer, RESOURCE_ENERGY, spaceToCarry) == ERR_NOT_IN_RANGE) {
 		            creep.moveTo(nearestContainer, {visualizePathStyle: {stroke: creep.memory.color}});
 		        }
         	}else{ //Else go mine
-        		var source = var nearestContainer = creep.pos.findClosestByRange(FIND_SOURCES);
+        		var source = creep.pos.findClosestByRange(FIND_SOURCES);
         		if(creep.harvest(source) == ERR_NOT_IN_RANGE){
         			creep.moveTo(source, {visualizePathStyle: {stroke: creep.memory.color}});
         		}
